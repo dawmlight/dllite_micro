@@ -1,0 +1,73 @@
+# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/lite/config/test.gni")
+
+copy("sample_model") {
+  sources = [ "dllite_micro_mnist.bin", "dllite_micro_libmnist.so" ]
+  outputs = [ "$root_out_dir/data/{{source_file_part}}" ]
+}
+
+unittest("FeatureInterpreterTest") {
+  output_extension = "bin"
+  output_dir = "$root_out_dir/test/unittest/ai/dllite_micro/common"
+
+  sources = [
+      "feature_interpreter_test.cpp",
+  ]
+
+  include_dirs = [
+    "//base/hiviewdfx/hilog_lite/interfaces/native/kits/hilog",
+    "//foundation/ai/engine/services/common/utils/log",
+    "//foundation/ai/engine/test/utils",
+    "//foundation/ai/dllite_micro/interfaces/kits/interpreter",
+    "//utils/native/lite/include",
+  ]
+
+  deps = [
+    "//base/hiviewdfx/hilog_lite/frameworks/featured:hilog_shared",
+    "//foundation/ai/dllite_micro/services/inferframework:dlliteclient_mslite_for_iot",
+    "//foundation/ai/dllite_micro/services/interpreter:dlliteclient",
+  ]
+}
+
+unittest("ModelInterpreterTest") {
+  output_extension = "bin"
+  output_dir = "$root_out_dir/test/unittest/ai/dllite_micro/common"
+
+  sources = [
+      "model_interpreter_test.cpp"
+  ]
+
+  include_dirs = [
+    "//base/hiviewdfx/hilog_lite/interfaces/native/kits/hilog",
+    "//foundation/ai/engine/services/common/utils/log",
+    "//foundation/ai/engine/test/utils",
+    "//foundation/ai/dllite_micro/interfaces/kits/interpreter",
+    "//utils/native/lite/include",
+    "//third_party/bounds_checking_function/include",
+  ]
+
+  deps = [
+    "//base/hiviewdfx/hilog_lite/frameworks/featured:hilog_shared",
+    "//foundation/ai/dllite_micro/services/inferframework:dlliteclient_mslite_for_iot",
+    "//foundation/ai/dllite_micro/services/interpreter:dlliteclient",
+  ]
+}
+
+group("unittest") {
+  deps = [
+    ":FeatureInterpreterTest",
+    ":ModelInterpreterTest",
+  ]
+}
