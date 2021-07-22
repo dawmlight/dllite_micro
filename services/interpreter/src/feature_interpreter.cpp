@@ -22,8 +22,8 @@ using namespace OHOS::AI;
 namespace OHOS {
 namespace AI {
 namespace dllite {
-const std::string DLLITE_VERSION = "HiAI DLLite_micro 11.1.0.201";
-const std::string FRAMEWORK_VERSION = "11.1.0.201";
+const std::string DLLITE_VERSION = "HiAI DLLite_micro 1.0.0.0";
+const std::string FRAMEWORK_VERSION = "1.0.0.0";
 
 const std::string FRAMEWORK_MINDSPORE = "MindSpore";
 
