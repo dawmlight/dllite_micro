@@ -1,3 +1,45 @@
+# SIG-DLLite-Micro
+简体中文 | [English](./README.md)
+
+说明：本SIG的内容遵循OpenHarmony的PMC管理章程 [README](https://gitee.com/openharmony/community/blob/master/zh/pmc.md)中描述的约定。
+
+## SIG组工作目标和范围
+
+### 工作目标
+DLLite-Micro是一个轻量级的AI推理框架，支持在运行OpenHarmony OS的轻量设备和小型设备上实现深度模型的推理。DLLite-Micro向开发者提供清晰、易上手的北向接口，降低开发者在端侧部署深度模型的难度；可对接多种基础推理框架，而基础推理框架则可对接不同的底层硬件。当前，DLLite-Micro仅适配了MindSpore Lite for IoT推理框架，后续会逐步增加其他的基础推理框架，开发者可以按需配置。
+
+### 工作范围
+- 模型推理功能
+接收用户传入的模型，在用户的正确调用下完成模型的加载，执行和卸载等操作；
+- 样例工程
+创建基础业务的样例工程，供开发者用户参考
+- 生态拓展
+开源框架工厂模块，指导三方设备厂商、芯片厂商对接框架
+
+## 代码仓
+- 代码仓地址：
+  - DLLite-Micro: https://gitee.com/openharmony-sig/dllite_micro
+
+## SIG组成员
+
+### Leader
+- @SilenChen(https://gitee.com/silenchen)
+
+### Committers列表
+- @ArmyLee0(https://gitee.com/armylee0)
+
+### 会议
+ - 会议时间：双周例会，周一晚上19:00, UTC+8
+ - 会议链接：[slack dllite-micro频道](https://openharmonyworkspace.slack.com/archives/C022T41JN68)
+ - 会议纪要：[归档链接地址](https://gitee.com/openharmony-sig/sig-content)
+
+### 联系方式(可选)
+
+- 邮件列表：dev@openharmony.io
+- Slack群组：[dllite-micro](https://openharmonyworkspace.slack.com/archives/C022T41JN68)
+
+***
+
 # AI业务子系统·DLLite-Micro<a name="ZH-CN_TOPIC_0000001101479158"></a>
 
 -   [简介](#section11660541593)
@@ -8,12 +50,12 @@
 
 ## 简介<a name="section11660541593"></a>
 
-DLLite-Micro是一个轻量级的AI推理框架，支持在运行OpenHarmony OS的轻量设备和小型设备上实现深度模型的推理。DLLite-Micro向开发者提供清晰、易上手的北向接口，降低开发者在端侧部署深度模型的难度；可对接多种基础推理框架，而基础推理框架则可对接不同的底层硬件。当前，DLLite-Micro仅适配了MindSpore Lite for IoT推理框架，后续会逐步增加其他的基础推理框架，开发者可以按需配置。
+DLLite-Micro是一个轻量级的AI推理框架，支持在运行OpenHarmony OS的轻量设备和小型设备上实现深度模型的推理。DLLite-Micro向开发者提供清晰、易上手的北向接口，降低开发者在端侧部署深度学习模型的难度；可对接多种基础推理框架，而基础推理框架则可对接不同的底层硬件。当前，DLLite-Micro仅适配了MindSpore Lite for IoT推理框架，后续会逐步增加其他的基础推理框架，开发者可以按需配置。
 
 **图 1**  DLLite-Micro框架架构图<a name="fig4460722185514"></a>  
 
 
-![](figures/DLLite系统架构图-修改.png)
+![](figures/dllite_micro_structure_zh.png)
 
 ## 目录<a name="section161941989596"></a>
 
@@ -43,6 +85,10 @@ DLLite-Micro是一个轻量级的AI推理框架，支持在运行OpenHarmony OS�
 
 **架构差异：** 由于MindSpore Lite提供的代码转换工具在ARM32M平台将模型结构和权重合并，不单独生成权重文件，在ARM32M架构平台上，DLLite-micro采用模型结构和权重合并的方式读取模型，ModelConfig.weightSeparateFlag\_需要设为false；在ARM32A架构平台，DLLite-micro采用模型结构和权重分离的形式读取模型，ModelConfig.weightSeparateFlag\_需要设为true。
 
+## 对外接口
+
+[DLLite-Micro对外接口](./interfaces/kits/README_zh.md)
+
 ## 开发步骤<a name="section83615381480"></a>
 
 1.  **DLLite-Micro框架编译**
@@ -54,7 +100,7 @@ DLLite-Micro是一个轻量级的AI推理框架，支持在运行OpenHarmony OS�
     **设置编译路径**
 
     ```
-    hb set -root dir //项目代码根目录
+    hb set -root dir //OpenHarmony根目录
     ```
 
     **设置编译产品**（执行后用方向键和回车进行选择）：
@@ -91,25 +137,26 @@ DLLite-Micro是一个轻量级的AI推理框架，支持在运行OpenHarmony OS�
     │   └── libwrapper.a                 # MindSpore Lite接口库
     ├── src                              # 源文件目录
     │   ├── micro                        # 通过codegen工具生成的推理源代码
-    │   └── mindspore_adapter.cpp        # 封装MindSpore Lite提供对外接口
+    │   └── mindspore_adapter.cpp        # 封装MindSpore Lite，提供对外接口
     └── BUILD.gn                         # GN配置文件
     ```
 
     1.  首先从[MindSpore开源网站](https://www.mindspore.cn/tutorial/lite/zh-CN/r1.2/use/downloads.html#id1)获取对应版本软件包（根据具体使用环境下载相应版本的软件包）；
-    2.  非Mindspore框架的模型需要用版本包内提供的converter工具将原始模型转换为ms格式模型，ms格式的模型可以跳过这一步，converter的使用请参考[推理模型转换](https://www.mindspore.cn/tutorial/lite/zh-CN/r1.2/use/converter_tool.html)；
+    2.  非Mindspore框架的模型需要用软件包内提供的converter工具将原始模型转换为ms格式模型，ms格式的模型可以跳过这一步，converter的使用请参考[推理模型转换](https://www.mindspore.cn/tutorial/lite/zh-CN/r1.2/use/converter_tool.html)；
     3.  使用codegen将ms模型转换成C/C++格式模型代码，模型代码生成在src目录下，将src目录下的模型代码拷贝到/foundation/ai/dllite\_micro/samples/model/mnist/src/micro目录下；
+    4.  将/foundation/ai/dllite\_micro/samples/model/mnist/src/micro目录下的model.h文件名修改为mmodel.h，同时将session.cc文件中的\#include"model.h"修改为\#include"mmodel.h"，避免和/foundation/ai/dllite\_micro/services/third\_party/mindspore\_lite/include/model.h混淆；
 
         >![](public_sys-resources/icon-notice.gif) **须知：** 
-        >请同步拷贝src目录下的net.bin模型权重，步骤3中需要加载模型权重进行推理。
+        >请同步拷贝src目录下的net.bin模型权重，后续步骤需要加载模型权重进行推理。
 
-    4.  下载MindSpore r1.2对应OpenHarmony的软件包，取出算子库和接口库（inference/lib/libmindspore-lite.a和tools/lib/libwrapper.a）拷贝到/foundation/ai/dllite\_micro/samples/model/mnist/lib目录下；
-    5.  将MindSpore Lite软件包中的推理框架头文件（tools/codegen/nnacl/和tools/codegen/wrapper/）拷贝到/foundation/ai/dllite\_micro/samples/model/mnist/include目录下；
-    6.  修改/build/lite/component/ai.json，添加模型编译的配置，如下所示为si.json文件片段，"\#\#start\#\#"和"\#\#end\#\#"之间为新增配置（"\#\#start\#\#"和"\#\#end\#\#"仅用来标识位置，添加完配置后删除这两行）：
+    5.  下载MindSpore r1.2对应OpenHarmony的软件包，取出算子库和接口库（inference/lib/libmindspore-lite.a和tools/lib/libwrapper.a）拷贝到/foundation/ai/dllite\_micro/samples/model/mnist/lib目录下；
+    6.  将MindSpore Lite软件包中的推理框架头文件（tools/codegen/nnacl/和tools/codegen/wrapper/）拷贝到/foundation/ai/dllite\_micro/samples/model/mnist/include目录下；
+    7.  修改/build/lite/component/ai.json，添加模型编译的配置，如下所示为ai.json文件片段，"\#\#start\#\#"和"\#\#end\#\#"之间为新增配置（"\#\#start\#\#"和"\#\#end\#\#"仅用来标识位置，添加完配置后删除这两行）：
 
     ```
     {
       "component": "ai_dllite_micro",
-      "description": "DLLite-micro framework.",
+      "description": "DLLite-Micro framework.",
       "optional": "true",      
       "dirs": [
         "foundation/ai/dllite_micro"
@@ -135,7 +182,7 @@ DLLite-Micro是一个轻量级的AI推理框架，支持在运行OpenHarmony OS�
     },
     ```
 
-    1.  参考步骤1编译dllite-micro，编译生成的模型动态库在/usr/lib/libmnist.so；
+    1.  编译dllite-micro，编译生成的模型动态库在/usr/lib/libmnist.so；
 
         >![](public_sys-resources/icon-note.gif) **说明：** 
         >MindSpore模型转换工具和代码生成工具下载和使用详见[MindSpore开源网站](https://www.mindspore.cn/tutorial/lite/zh-CN/r1.2/index.html)。
@@ -248,7 +295,7 @@ DLLite-Micro是一个轻量级的AI推理框架，支持在运行OpenHarmony OS�
     ```
     {
       "component": "ai_dllite_micro",
-      "description": "DLLite-micro framework.",
+      "description": "DLLite-Micro framework.",
       "optional": "true",      
       "dirs": [
         "foundation/ai/dllite_micro"
@@ -284,7 +331,7 @@ DLLite-Micro是一个轻量级的AI推理框架，支持在运行OpenHarmony OS�
     }
     ```
 
-    参考编译dllite-micro组件，编译生成的样例程序在/bin/dllite\_micro\_mnist\_sample.bin，在OpenHarmony系统中执行以下命令，运行应用程序：
+    编译dllite-micro组件，编译生成的样例程序在/bin/dllite\_micro\_mnist\_sample.bin，在OpenHarmony系统中执行以下命令，运行应用程序：
 
     ```
     cd /bin
@@ -299,4 +346,3 @@ DLLite-Micro是一个轻量级的AI推理框架，支持在运行OpenHarmony OS�
 -   [hiviewdfx\_hilog\_lite](https://gitee.com/openharmony/hiviewdfx_hilog_lite)
 -   [utils\_native\_lite](https://gitee.com/openharmony/)
 -   [mindspore](https://gitee.com/mindspore/mindspore)
-
