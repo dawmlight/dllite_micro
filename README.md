@@ -92,25 +92,110 @@ DLLite-Micro is a lightweight artificial intelligence \(AI\) inference framework
 
 ## Development Procedure<a name="section83615381480"></a>
 
-1.  Build the DLLite-Micro framework.
+1.  **Build the DLLite-Micro framework.**
 
     For the lightweight AI inference engine framework module, the source code is stored in  **/foundation/ai/dllite\_micro/services**.
 
     The build commands are as follows:
 
-    1. Set the build path.
+    **Set the build path.**
 
     ```
     hb set -root dir // root directory of OpenHarmony
     ```
 
-    2. Specify a product for building. \(Select a product with arrow keys and press  **Enter**.\)
+    **Specify a product for building.** \(Select a product with arrow keys and press  **Enter**.\)
 
     ```
     hb set -p
     ```
 
-    3. Start building.
+    **Add DLLite-Micro component**
+
+    Add the configuration of the DLLite-Micro component to the /build/lite/components/ai.json file. The sample code below shows some configurations defined in the ai.json file, and the code between ##start## and ##end## is the new configuration (Delete the rows where ##start## and ##end## are located after the configurations are added.)
+    ```
+    {
+      "components": [
+        {
+          "component": "ai_engine",
+          "description": "AI engine framework.",
+          "optional": "true",
+          "dirs": [
+            "foundation/ai/engine"
+          ],
+          "targets": [
+            "//foundation/ai/engine/services:ai"
+          ],
+          "rom": "130KB",
+          "ram": "~337KB",
+          "output": [
+            "ai_server",
+            "ai_communication_adapter.a"
+          ],
+          "adapted_kernel": [
+            "liteos_a",
+            "linux"
+          ],
+          "features": [],
+          "deps": {
+            "third_party": [
+              "bounds_checking_function",
+              "iniparser"
+            ],
+            "kernel_special": {},
+            "board_special": {},
+            "components": [
+              "hilog",
+              "utils_base",
+              "ipc_lite",
+              "samgr_lite"
+            ]
+          }
+        },
+    ##start##
+        {
+          "component": "ai_dllite_micro",
+          "description": "DLLite-micro framework.",
+          "optional": "true",
+          "dirs": [
+            "foundation/ai/dllite_micro"
+          ],
+          "targets": [
+            "//foundation/ai/dllite_micro/services:ai_dllite_micro",
+          ],
+          "rom": "",
+          "ram": "",
+          "output": [
+            "libdlliteclient.so",
+            "libdlliteclient_mslite_for_iot.so"
+          ],
+          "adapted_kernel": ["liteos_a"],
+          "features": [],
+          "deps": {
+            "third_party": [],
+            "components": []
+          }
+        }
+    ##end##
+      ]
+    }
+    ```
+    **Modify the board configuration file.**
+
+    Add the DLLite-Micro component to the vendor/hisilicon/hispark_taurus/config.json file. The sample code below shows the configurations of the ai subsystem, and the code between ##start## and ##end## is the new configuration (Delete the rows where ##start## and ##end## are located after the configurations are added.)
+    ```
+        {
+          "subsystem": "ai",
+          "components": [
+            { "component": "ai_engine", "features":[] },
+    ##start##
+            { "component": "ai_dllite_micro", "features": [] }
+    ##end##
+          ]
+        },
+    ```
+
+    **Start building.**
 
     ```
     hb build -f // Build the entire repository.
@@ -155,35 +240,35 @@ DLLite-Micro is a lightweight artificial intelligence \(AI\) inference framework
     7.  Modify the  **/build/lite/component/ai.json**  file and add the model compilation configuration. The following is a code segment of the  **ai.json**  file: The content between  **\#\#start\#\#**  and  **\#\#end\#\#**  is the new configuration. \(**\#\#start\#\#**  and  **\#\#end\#\#**  are only used to identify the positions. After the configuration is added, delete the two lines.\)
 
     ```
-    {
-      "component": "ai_dllite_micro",
-      "description": "DLLite-Micro framework.",
-      "optional": "true",      
-      "dirs": [
-        "foundation/ai/dllite_micro"
-      ],
-      "targets": [
-        "//foundation/ai/dllite_micro/services:ai_dllite_micro",
+        {
+          "component": "ai_dllite_micro",
+          "description": "DLLite-Micro framework.",
+          "optional": "true",      
+          "dirs": [
+            "foundation/ai/dllite_micro"
+          ],
+          "targets": [
+            "//foundation/ai/dllite_micro/services:ai_dllite_micro",
         ##start##
-        "//foundation/ai/dllite_micro/samples:dllite_micro_sample_model"
+            "//foundation/ai/dllite_micro/samples:dllite_micro_sample_model"
         ##end##
-      ],
-      "rom": "",
-      "ram": "",
-      "output": [
-        "libdlliteclient.so",
-        "libdlliteclient_mslite_for_iot.so"
-      ],
-      "adapted_kernel": [ "liteos_a" ],
-      "features": [],
-      "deps": {
-        "components": [],
-        "third_party": []
-      }
-    },
+          ],
+          "rom": "",
+          "ram": "",
+          "output": [
+            "libdlliteclient.so",
+            "libdlliteclient_mslite_for_iot.so"
+          ],
+          "adapted_kernel": [ "liteos_a" ],
+          "features": [],
+          "deps": {
+            "components": [],
+            "third_party": []
+          }
+        },
     ```
 
-    1.  Compile DLLite-Micro. The generated model dynamic library is stored in  **/usr/lib/libmnist.so**.
+    8.  Compile DLLite-Micro. The generated model dynamic library is stored in  **/usr/lib/libmnist.so**.
 
         >![](public_sys-resources/icon-note.gif) **NOTE:** 
         >For details about how to download and use the MindSpore model converter and codegen tools, go to the  [MindSpore open source website](https://www.mindspore.cn/tutorial/lite/en/r1.2/use/downloads.html#id1).
@@ -294,33 +379,33 @@ DLLite-Micro is a lightweight artificial intelligence \(AI\) inference framework
     As shown below, add the  **dllite\_micro\_sample**  configuration to the  **ai.json**  file. \(**\#\#start\#\#**  and  **\#\#end\#\#**  are only used to identify the positions. After the configuration is added, delete the two lines.\)
 
     ```
-    {
-      "component": "ai_dllite_micro",
-      "description": "DLLite-Micro framework.",
-      "optional": "true",      
-      "dirs": [
-        "foundation/ai/dllite_micro"
-      ],
-      "targets": [
-        "//foundation/ai/dllite_micro/services:ai_dllite_micro",
-        "//foundation/ai/dllite_micro/samples:dllite_micro_sample_model",
+        {
+          "component": "ai_dllite_micro",
+          "description": "DLLite-Micro framework.",
+          "optional": "true",      
+          "dirs": [
+            "foundation/ai/dllite_micro"
+          ],
+          "targets": [
+            "//foundation/ai/dllite_micro/services:ai_dllite_micro",
+            "//foundation/ai/dllite_micro/samples:dllite_micro_sample_model",
         ##start##
-        "//foundation/ai/dllite_micro/samples:dllite_micro_sample"
+            "//foundation/ai/dllite_micro/samples:dllite_micro_sample"
         ##end##
-      ],
-      "rom": "",
-      "ram": "",
-      "output": [
-        "libdlliteclient.so",
-        "libdlliteclient_mslite_for_iot.so"
-      ],
-      "adapted_kernel": [ "liteos_a" ],
-      "features": [],
-      "deps": {
-        "components": [],
-        "third_party": []
-      }
-    },
+          ],
+          "rom": "",
+          "ram": "",
+          "output": [
+            "libdlliteclient.so",
+            "libdlliteclient_mslite_for_iot.so"
+          ],
+          "adapted_kernel": [ "liteos_a" ],
+          "features": [],
+          "deps": {
+            "components": [],
+            "third_party": []
+          }
+        },
     ```
 
     The sample application requires the model dynamic library and model weight files. Add the following commands to  **/foundation/ai/dllite-micro/samples/app/mnist/BUILD.gn**. During compilation, copy the model weight file generated by MindSpore Lite to the  **/storage/data/**  directory of OpenHarmony.
