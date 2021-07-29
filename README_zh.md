@@ -109,6 +109,92 @@ DLLite-Micro是一个轻量级的AI推理框架，支持在运行OpenHarmony OS�
     hb set -p
     ```
 
+    **添加DLLite-Micro组件**
+
+    修改文件/build/lite/components/ai.json，添加DLLite-Micro的配置，如下所示为ai.json文件片段，"\#\#start\#\#"和"\#\#end\#\#"之间为新增配置（"\#\#start\#\#"和"\#\#end\#\#"仅用来标识位置，添加完配置后删除这两行）：
+    ```
+    {
+      "components": [
+        {
+          "component": "ai_engine",
+          "description": "AI engine framework.",
+          "optional": "true",
+          "dirs": [
+            "foundation/ai/engine"
+          ],
+          "targets": [
+            "//foundation/ai/engine/services:ai"
+          ],
+          "rom": "130KB",
+          "ram": "~337KB",
+          "output": [
+            "ai_server",
+            "ai_communication_adapter.a"
+          ],
+          "adapted_kernel": [
+            "liteos_a",
+            "linux"
+          ],
+          "features": [],
+          "deps": {
+            "third_party": [
+              "bounds_checking_function",
+              "iniparser"
+            ],
+            "kernel_special": {},
+            "board_special": {},
+            "components": [
+              "hilog",
+              "utils_base",
+              "ipc_lite",
+              "samgr_lite"
+            ]
+          }
+        },
+    ##start##
+        {
+          "component": "ai_dllite_micro",
+          "description": "DLLite-micro framework.",
+          "optional": "true",
+          "dirs": [
+            "foundation/ai/dllite_micro"
+          ],
+          "targets": [
+            "//foundation/ai/dllite_micro/services:ai_dllite_micro",
+          ],
+          "rom": "",
+          "ram": "",
+          "output": [
+            "libdlliteclient.so",
+            "libdlliteclient_mslite_for_iot.so"
+          ],
+          "adapted_kernel": ["liteos_a"],
+          "features": [],
+          "deps": {
+            "third_party": [],
+            "components": []
+          }
+        }
+    ##end##
+      ]
+    }
+    ```
+
+    **修改单板配置文件**
+
+    修改文件vendor/hisilicon/hispark_taurus/config.json，新增DLLite-Micro组件的条目，如下所示代码片段为ai子系统配置，"##start##"和"##end##"之间为新增条目（"##start##"和"##end##"仅用来标识位置，添加完配置后删除这两行）：
+    ```
+        {
+          "subsystem": "ai",
+          "components": [
+            { "component": "ai_engine", "features":[] },
+    ##start##
+            { "component": "ai_dllite_micro", "features": [] }
+    ##end##
+          ]
+        },
+    ```
+
     **执行编译**：
 
     ```
@@ -154,35 +240,35 @@ DLLite-Micro是一个轻量级的AI推理框架，支持在运行OpenHarmony OS�
     7.  修改/build/lite/component/ai.json，添加模型编译的配置，如下所示为ai.json文件片段，"\#\#start\#\#"和"\#\#end\#\#"之间为新增配置（"\#\#start\#\#"和"\#\#end\#\#"仅用来标识位置，添加完配置后删除这两行）：
 
     ```
-    {
-      "component": "ai_dllite_micro",
-      "description": "DLLite-Micro framework.",
-      "optional": "true",      
-      "dirs": [
-        "foundation/ai/dllite_micro"
-      ],
-      "targets": [
-        "//foundation/ai/dllite_micro/services:ai_dllite_micro",
+        {
+          "component": "ai_dllite_micro",
+          "description": "DLLite-Micro framework.",
+          "optional": "true",      
+          "dirs": [
+            "foundation/ai/dllite_micro"
+          ],
+          "targets": [
+            "//foundation/ai/dllite_micro/services:ai_dllite_micro",
         ##start##
-        "//foundation/ai/dllite_micro/samples:dllite_micro_sample_model"
+            "//foundation/ai/dllite_micro/samples:dllite_micro_sample_model"
         ##end##
-      ],
-      "rom": "",
-      "ram": "",
-      "output": [
-        "libdlliteclient.so",
-        "libdlliteclient_mslite_for_iot.so"
-      ],
-      "adapted_kernel": [ "liteos_a" ],
-      "features": [],
-      "deps": {
-        "components": [],
-        "third_party": []
-      }
-    },
+          ],
+          "rom": "",
+          "ram": "",
+          "output": [
+            "libdlliteclient.so",
+            "libdlliteclient_mslite_for_iot.so"
+          ],
+          "adapted_kernel": [ "liteos_a" ],
+          "features": [],
+          "deps": {
+            "components": [],
+            "third_party": []
+          }
+        },
     ```
 
-    1.  编译dllite-micro，编译生成的模型动态库在/usr/lib/libmnist.so；
+    8.  编译dllite-micro，编译生成的模型动态库在/usr/lib/libmnist.so；
 
         >![](public_sys-resources/icon-note.gif) **说明：** 
         >MindSpore模型转换工具和代码生成工具下载和使用详见[MindSpore开源网站](https://www.mindspore.cn/tutorial/lite/zh-CN/r1.2/index.html)。
@@ -293,33 +379,33 @@ DLLite-Micro是一个轻量级的AI推理框架，支持在运行OpenHarmony OS�
     如下图所示，在ai.json中添加dllite\_micro\_sample的配置（"\#\#start\#\#"和"\#\#end\#\#"仅用来标识位置，添加完配置后删除这两行）：
 
     ```
-    {
-      "component": "ai_dllite_micro",
-      "description": "DLLite-Micro framework.",
-      "optional": "true",      
-      "dirs": [
-        "foundation/ai/dllite_micro"
-      ],
-      "targets": [
-        "//foundation/ai/dllite_micro/services:ai_dllite_micro",
-        "//foundation/ai/dllite_micro/samples:dllite_micro_sample_model",
+        {
+          "component": "ai_dllite_micro",
+          "description": "DLLite-Micro framework.",
+          "optional": "true",      
+          "dirs": [
+            "foundation/ai/dllite_micro"
+          ],
+          "targets": [
+            "//foundation/ai/dllite_micro/services:ai_dllite_micro",
+            "//foundation/ai/dllite_micro/samples:dllite_micro_sample_model",
         ##start##
-        "//foundation/ai/dllite_micro/samples:dllite_micro_sample"
+            "//foundation/ai/dllite_micro/samples:dllite_micro_sample"
         ##end##
-      ],
-      "rom": "",
-      "ram": "",
-      "output": [
-        "libdlliteclient.so",
-        "libdlliteclient_mslite_for_iot.so"
-      ],
-      "adapted_kernel": [ "liteos_a" ],
-      "features": [],
-      "deps": {
-        "components": [],
-        "third_party": []
-      }
-    },
+          ],
+          "rom": "",
+          "ram": "",
+          "output": [
+            "libdlliteclient.so",
+            "libdlliteclient_mslite_for_iot.so"
+          ],
+          "adapted_kernel": [ "liteos_a" ],
+          "features": [],
+          "deps": {
+            "components": [],
+            "third_party": []
+          }
+        },
     ```
 
     样例程序需要模型动态库和模型权重两个文件，在/foundation/ai/dllite-micro/samples/app/mnist/BUILD.gn添加如下命令，编译时将MindSpore Lite生成的模型权重文件拷贝到OpenHarmony系统/storage/data/目录下。
