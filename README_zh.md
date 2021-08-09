@@ -160,7 +160,7 @@ DLLite-Micro是一个轻量级的AI推理框架，支持在运行OpenHarmony OS�
             "foundation/ai/dllite_micro"
           ],
           "targets": [
-            "//foundation/ai/dllite_micro/services:ai_dllite_micro",
+            "//foundation/ai/dllite_micro/services:ai_dllite_micro"
           ],
           "rom": "",
           "ram": "",
