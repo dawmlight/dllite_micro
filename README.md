@@ -161,7 +161,7 @@ DLLite-Micro is a lightweight artificial intelligence \(AI\) inference framework
             "foundation/ai/dllite_micro"
           ],
           "targets": [
-            "//foundation/ai/dllite_micro/services:ai_dllite_micro",
+            "//foundation/ai/dllite_micro/services:ai_dllite_micro"
           ],
           "rom": "",
           "ram": "",
